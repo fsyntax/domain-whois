@@ -1,61 +1,43 @@
 #!/usr/bin/env python3
 import whois
-from flask import Flask, render_template, request
+from flask import Flask, request, jsonify
 from time import sleep
 
-app = Flask(__name__, static_folder="assets")
+app = Flask(__name__)
 
-site_title = "Domain WHOIS Lookup"
+
+@app.route("/health", methods=["GET"])
+def health_check():
+    return jsonify({"status": "healthy"})
 
 
 @app.route("/<domain>", methods=["GET"])
 def home_domain(domain):
-    return display_homepage(domain, process_domain(domain))
+    return jsonify(process_domain(domain))
 
 
 @app.route("/", methods=["GET"])
 def home():
-    domain = "example.com"
-    page_body = process_domain(domain)
-
-    return display_homepage(domain, page_body)
+    domain = "scamsniper.org"
+    return jsonify(process_domain(domain))
 
 
 @app.route("/", methods=["POST"])
 def home_post():
-    domain = "example.com"
-
+    domain = "scamsniper.org"
     sleep(0.25)
-
     submitted_domain = str(request.form["domain"])
-
     if submitted_domain == "":
         submitted_domain = domain
-
-    page_body = process_domain(submitted_domain)
-
-    return display_homepage(submitted_domain, page_body)
+    return jsonify(process_domain(submitted_domain))
 
 
 def process_domain(domain):
-    page_body = ""
-
     try:
-        domain_info = str(whois.whois(domain))
-        domain_info = domain_info.replace("\n", "<BR>")
-
-        page_body += domain_info
-
+        domain_info = whois.whois(domain)
+        return {"domain": domain, "info": domain_info}
     except Exception:
-        page_body += "Unable to perform domain WHOIS lookup, please try again."
-
-    return page_body
-
-
-def display_homepage(domain, page_body):
-    return render_template(
-        "home.html", site_title=site_title, domain=domain, page_body=page_body
-    )
+        return {"domain": domain, "info": "Unable to perform domain WHOIS lookup, please try again."}
 
 
 if __name__ == "__main__":
