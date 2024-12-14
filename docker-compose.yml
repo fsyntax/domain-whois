@@ -4,7 +4,7 @@ services:
     build:
       context: ./services/web
       dockerfile: Dockerfile
-    command: flask run --host=0.0.0.0 --port=5000
+    command: gunicorn --bind 0.0.0.0:5000 --workers=2 project.__init__:app
     ports:
       - 8094:5000
     volumes:
@@ -14,8 +14,7 @@ services:
       - .env
     environment:
       - FLASK_APP=project/__init__.py
-      - FLASK_ENV=development
-      - FLASK_RUN_EXTRA_FILES=/usr/src/app
+      - FLASK_ENV=production
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
       interval: 30s
