@@ -23,13 +23,13 @@ app.logger.addHandler(handler)
 # Configure CORS
 CORS(
     app,
-    origins=["http://scamsniper.org", "http://localhost:3000"],
+    origins=["http://scamsniper.org", "https://www.scamsniper.org"],
     methods=["GET"],
 )
 
 
 API_KEY = os.getenv('API_KEY')
-DEFAULT_DOMAIN = os.getenv('DEFAULT_DOMAIN', 'default.com')
+DEFAULT_DOMAIN = os.getenv('DEFAULT_DOMAIN', 'scamsniper.com')
 
 
 @app.before_request
