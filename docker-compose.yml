@@ -1,7 +1,4 @@
-version: '3.8'
-
 services:
-
   web:
     container_name: domain_whois
     build:
@@ -13,6 +10,8 @@ services:
     volumes:
       - ./services/web:/usr/src/app
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       - FLASK_APP=project/__init__.py
       - FLASK_ENV=development
